@@ -1,0 +1,8 @@
+V1 Requirements
+(x) it should have an operators object that has add, subtract, divide, and multiply methods.
+(x) add should use the spread operator to put the arguments in an array.
+(x) it should use a foreach to adds all the arguments up.
+(x) it should return the result
+(x) same with subtract, multiply, and divide.
+
+V2 Requirements

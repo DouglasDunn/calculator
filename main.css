@@ -1,0 +1,29 @@
+button {
+  font-size: 50px;
+  width: 70px;
+}
+
+.clear {
+  width: 218px;
+}
+
+#zero {
+  width: 144px;
+}
+
+#screen {
+  background-color: #fbeecb;
+}
+
+#calculator {
+  width: 292px;
+  margin: auto;
+}
+
+body {
+  background: #000066;
+}
+
+#title {
+  color: white;
+}

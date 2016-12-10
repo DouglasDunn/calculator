@@ -1,14 +1,35 @@
 // renders the top screen
 function paintScreen(display) {
 
-  $("#top").html(display);
+  if (!display) {
+
+    $("#top").html(0);
+
+  } else if (overload) {
+
+    $("#top").html("overload");
+
+  } else {
+    $("#top").html(display);
+  }
 
 }
 
 // renders the bottom screen
 function paintBottomScreen(bottomArray) {
+  if (!bottomArray) {
 
-  $("#bottom").html(bottomArray.join(""));
+    $("#bottom").html(0);
+
+  } else if (bottomArray.join("").length > 19) {
+    $("#bottom").html("overload");
+    overload = true;
+
+  } else {
+
+    $("#bottom").html(bottomArray.join(""));
+
+  }
 
 }
 
@@ -18,11 +39,16 @@ var bottomArray = [];
 var result = "";
 var counter = 0;
 var numberString = "";
+var overload = false;
 
 // when a number gets clicked
 $("#buttons").on("click", ".numbers", function(e) {
 
   var $number = $(e.target);
+
+  if (overload) {
+    return;
+  }
 
   // if last operar used was an equal, clear all variables and refresh the calculator.
   if (operatorArray[operatorArray.length - 1] === "=") {
@@ -44,12 +70,13 @@ $("#buttons").on("click", ".numbers", function(e) {
   // concatenate the value onto numberString
   numberString += $number.val();
 
-  // render the HTML with the number
-  paintScreen(numberString);
-
   // push the number onto the bottomArray and render the bottom screen
   bottomArray.push($number.val());
   paintBottomScreen(bottomArray);
+
+  // render the HTML with the number
+  paintScreen(numberString);
+
 
 });
 
@@ -58,14 +85,18 @@ $("#buttons").on("click", ".operators", function(e) {
 
   var $operator = $(e.target);
 
+  if (overload) {
+    return;
+  }
+
   // if last operator used was an equal sign and the operator that has just been pressed is not an equal sign, then push the operator onto the calculatorArray and operatorArray, render the HTML with the operator, push the operator onto the bottomArray, render the bottom screen, and then return.
   if (operatorArray[operatorArray.length - 1] === "=" && $operator.val() !== "=") {
 
     calculatorArray.push($operator.val());
     operatorArray.push($operator.val());
-    paintScreen($operator.val());
     bottomArray.push($operator.val());
     paintBottomScreen(bottomArray);
+    paintScreen($operator.val());
     return;
 
   }
@@ -85,12 +116,15 @@ $("#buttons").on("click", ".operators", function(e) {
   if ($operator.val() === "=") {
 
     result = eval(calculatorArray.join(""));
+    bottomArray.push("=");
+    bottomArray.push(result);
+    paintBottomScreen(bottomArray);//***************
     paintScreen(result);
     calculatorArray = [result];
     numberString = "";
-    bottomArray.push("=");
-    bottomArray.push(result);
-    paintBottomScreen(bottomArray);
+    // bottomArray.push("=");
+    // bottomArray.push(result);
+    // paintBottomScreen(bottomArray);*****************
     bottomArray = [result];
     return;
 
@@ -117,7 +151,11 @@ $("#buttons").on("click", ".operators", function(e) {
 // when a decimal is clicked
 $("#buttons").on("click", "#decimal", function(e) {
 
-  $decimal = $(e.target);
+  var $decimal = $(e.target);
+
+  if (overload) {
+    return;
+  }
 
   // if numberString already has a decimal in it, return
   if (numberString.indexOf(".") !== -1) {
@@ -125,7 +163,7 @@ $("#buttons").on("click", "#decimal", function(e) {
   }
 
   // if the first character of numberString is not a number, clear the numberString
-  if (!(Number(numberString[0]))) {
+  if (!(Number(parseFloat(numberString[0]))) && parseFloat(numberString[0]) !== 0) {
     numberString = "";
   }
 
@@ -135,21 +173,48 @@ $("#buttons").on("click", "#decimal", function(e) {
     numberString += "0.";
 
     if (operatorArray[operatorArray.length - 1] === "=") {
-      bottomArray = ["0."];
-      paintBottomScreen(bottomArray);
+
+      bottomArray = [numberString];
+
+    } else {
+
+      bottomArray.push(numberString);
+
     }
 
+    paintBottomScreen(bottomArray);
   // else just concatenate the decimal to the number
   } else {
 
     numberString += $decimal.val();
     bottomArray.push($decimal.val());
-    paintBottomScreen(bottomArray);
+    // paintBottomScreen(bottomArray);
 
   }
 
   //render the screen with the concatenated decimal
+  paintBottomScreen(bottomArray);
   paintScreen(numberString);
+});
+
+$("#buttons").on("click", ".clear", function(e) {
+
+  var $clear = $(e.target);
+
+  if ($clear.val() === "AC") {
+
+    calculatorArray = [];
+    operatorArray = [];
+    bottomArray = [];
+    result = "";
+    counter = 0;
+    numberString = "";
+    overload = false;
+
+    paintBottomScreen();
+    paintScreen();
+
+  }
 });
 
 // if (value === "=" || value === "+" || value === "-" || value === "*" || value === "/") {

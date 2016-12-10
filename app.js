@@ -116,6 +116,16 @@ $("#buttons").on("click", ".operators", function(e) {
   if ($operator.val() === "=") {
 
     result = eval(calculatorArray.join(""));
+
+    for (var i = 0; i < result.toString().length; i++) {
+      if (result.toString()[i] === ".") {
+        var decimalPlace = result.toString().length - i - 1;
+        if (decimalPlace > 4) {
+          result = result.toFixed(4);
+        }
+      }
+    }
+
     bottomArray.push("=");
     bottomArray.push(result);
     paintBottomScreen(bottomArray);//***************
